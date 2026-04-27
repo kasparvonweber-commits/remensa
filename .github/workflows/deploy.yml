@@ -14,4 +14,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WILLDO_2F23B }}'
           channelId: live
           projectId: willdo-2f23b
-          target: remensa
+          site: remensa
