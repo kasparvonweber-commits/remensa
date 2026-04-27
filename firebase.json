@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "remensa",
     "public": ".",
     "ignore": [
       "firebase.json",
