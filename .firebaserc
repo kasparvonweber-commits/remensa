@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "willdo-2f23b"
+  },
+  "targets": {
+    "willdo-2f23b": {
+      "hosting": {
+        "remensa": [
+          "remensa"
+        ]
+      }
+    }
+  }
+}
