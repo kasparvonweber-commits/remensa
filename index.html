@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -9,7 +8,7 @@
 <style>
   :root {
     --bg: #1A1814; 
-    --surface: #24221E; 
+    --surface: #24221E;
     --ink: #D1CDC7; 
     --ink-soft: #A6A29A; 
     --ink-faint: #4A4640;
@@ -17,12 +16,12 @@
     --border: #33302B;
     --shadow: 0 4px 20px rgba(0,0,0,0.3); 
     --radius: 12px;
+    --purple: #9b51e0;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-  /* Inloggning */
   #loading { min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem; }
   .spinner { width:32px; height:32px; border:2.5px solid var(--border); border-top-color:var(--ink); border-radius:50%; animation:spin .7s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
@@ -36,22 +35,18 @@
 
   #app { display:none; min-height:100vh; display:flex; flex-direction:column; }
 
-  /* Header */
   header { background:var(--surface); border-bottom:1px solid var(--border); padding:.875rem 1.25rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
   .logo { font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--ink); letter-spacing:-.5px; cursor:pointer; line-height:1; }
   .avatar { width:30px; height:30px; border-radius:50%; object-fit:cover; border:2px solid var(--border); cursor:pointer; }
 
-  /* Vyer */
   .view { display:none; flex:1; max-width:700px; width:100%; margin:0 auto; padding:1.25rem; padding-bottom:7rem; }
   .view.active { display:block; }
 
-  /* Filter bar (Huvudvy) */
   .filter-bar { display:flex; gap:.5rem; overflow-x:auto; padding-bottom:.75rem; margin-bottom:.75rem; scrollbar-width:none; }
   .filter-bar::-webkit-scrollbar { display:none; }
   .tag-btn { background:var(--bg); border:1.5px solid var(--border); border-radius:20px; padding:.4rem .875rem; font-family:'Inter',sans-serif; font-size:.85rem; color:var(--ink-soft); cursor:pointer; white-space:nowrap; transition:all .15s; }
   .tag-btn.active { background:var(--ink); color:var(--bg); border-color:var(--ink); font-weight:500; }
 
-  /* Receptlista */
   .recipe-card { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:1rem; margin-bottom:.75rem; cursor:pointer; transition:border-color .15s; display:flex; flex-direction:column; gap:.5rem; }
   .recipe-card:hover { border-color:var(--ink-soft); }
   .rc-title { font-size:1.1rem; font-weight:600; color:var(--ink); }
@@ -59,7 +54,6 @@
   .rc-tags { display:flex; gap:.3rem; flex-wrap:wrap; }
   .rc-tag { background:var(--bg); border:1px solid var(--border); padding:.2rem .5rem; border-radius:12px; font-size:.7rem; color:var(--ink-soft); }
 
-  /* Receptvy */
   .rv-header { margin-bottom:1.5rem; }
   .rv-title { font-family:'DM Serif Display',serif; font-size:2rem; color:var(--ink); line-height:1.1; margin-bottom:.75rem; width:100%; background:transparent; border:none; outline:none; }
   .rv-title:focus { border-bottom:1px solid var(--ink-soft); }
@@ -78,17 +72,25 @@
   .cook-btn { background:var(--ink); color:var(--bg); border:none; border-radius:6px; padding:.4rem .8rem; font-family:'Inter',sans-serif; font-size:.8rem; font-weight:600; cursor:pointer; }
   .cook-btn:active { transform:scale(0.95); }
   
-  .stat-list { display:none; margin-top:.75rem; border-top:1px solid var(--border); padding-top:.75rem; font-size:.8rem; color:var(--ink-faint); max-height:150px; overflow-y:auto; }
+  .stat-list { display:none; margin-top:.75rem; border-top:1px solid var(--border); padding-top:.75rem; font-size:.8rem; color:var(--ink-faint); max-height:250px; overflow-y:auto; }
   .stat-list.open { display:block; }
-  .stat-item { margin-bottom:.3rem; }
+  .stat-item { margin-bottom:.5rem; }
 
   .rv-content { width:100%; min-height:400px; background:transparent; border:none; color:var(--ink); font-family:'Inter',sans-serif; font-size:1rem; line-height:1.6; outline:none; resize:none; }
 
-  /* Bottenmeny */
   .bottom-bar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border); padding:.75rem 1.25rem; padding-bottom:calc(.75rem + env(safe-area-inset-bottom)); z-index:90; display:flex; gap:.625rem; align-items:center; justify-content:flex-end; }
   .btm-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:.6rem 1rem; font-family:'Inter',sans-serif; font-size:.9rem; font-weight:500; color:var(--ink); cursor:pointer; display:flex; align-items:center; gap:.4rem; transition:all .15s; }
   .btm-btn:hover { border-color:var(--ink-soft); }
   .btm-btn.primary { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+
+  /* Modal för betyg */
+  .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; padding:1.5rem; }
+  .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; width:100%; max-width:400px; display:flex; flex-direction:column; gap:1.2rem; box-shadow: var(--shadow); }
+  .modal-title { font-family:'DM Serif Display',serif; font-size:1.5rem; color:var(--ink); }
+  .stars-container { display:flex; gap:0.5rem; font-size:2.5rem; cursor:pointer; user-select:none; justify-content: center; }
+  .star { color: var(--ink-faint); transition: color 0.2s; }
+  .modal-textarea { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--ink); font-family:'Inter',sans-serif; padding:0.75rem; border-radius:8px; resize:vertical; min-height:100px; outline:none; }
+  .modal-actions { display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem; }
 
   .toast { position:fixed; bottom:6rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(--ink); color:var(--bg); padding:.75rem 1.25rem; border-radius:var(--radius); font-size:.875rem; z-index:999; transition:transform .3s ease; white-space:nowrap; pointer-events:none; }
   .toast.show { transform:translateX(-50%) translateY(0); }
@@ -127,7 +129,7 @@
       <div class="rv-tags-edit" id="rv-tags-edit">
         <input type="text" class="tag-input" id="tag-input" placeholder="+ Lägg till etikett" onkeydown="if(event.key==='Enter') addTagToRecipe(this.value)">
       </div>
-      
+  
       <div class="rv-stats">
         <div class="stat-summary">
           <span class="stat-text" id="stat-text" onclick="toggleStats()">Lagad 0 gånger</span>
@@ -142,6 +144,24 @@
     <div class="bottom-bar">
       <button class="btm-btn" style="color:var(--accent); border-color:transparent;" onclick="deleteRecipe()">Ta bort</button>
       <button class="btm-btn" onclick="goHome()">Stäng</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="rating-modal">
+  <div class="modal-box">
+    <div class="modal-title">Betygsätt rätten</div>
+    <div class="stars-container">
+      <span class="star" id="star-1" onclick="setRating(1)">★</span>
+      <span class="star" id="star-2" onclick="setRating(2)">★</span>
+      <span class="star" id="star-3" onclick="setRating(3)">★</span>
+      <span class="star" id="star-4" onclick="setRating(4)">★</span>
+      <span class="star" id="star-5" onclick="setRating(5)">★</span>
+    </div>
+    <textarea class="modal-textarea" id="rating-comment" placeholder="Kommentar (valfritt)... Hur gillade dottern det? Vad ändrar vi nästa gång?"></textarea>
+    <div class="modal-actions">
+      <button class="btm-btn" onclick="closeRatingModal()">Hoppa över</button>
+      <button class="btm-btn primary" onclick="saveRating()">Spara</button>
     </div>
   </div>
 </div>
@@ -168,6 +188,7 @@ const db = getFirestore(fa);
 let user = null, recipes = [];
 let activeFilters = new Set();
 let currentRecipeId = null;
+let tempRating = 0;
 
 onAuthStateChanged(auth, u => {
   document.getElementById('loading').style.display='none';
@@ -215,7 +236,6 @@ function renderList() {
   const allTags = new Set();
   recipes.forEach(r => (r.tags||[]).forEach(t => allTags.add(t)));
   
-  // Rendera filtermenyn
   const fBar = document.getElementById('filter-bar');
   fBar.innerHTML = '';
   Array.from(allTags).sort().forEach(tag => {
@@ -229,7 +249,6 @@ function renderList() {
     fBar.appendChild(btn);
   });
 
-  // Poängberäkning och sortering
   const sorted = [...recipes].sort((a, b) => getScore(b) - getScore(a));
   
   const c = document.getElementById('recipe-list');
@@ -238,7 +257,8 @@ function renderList() {
     const dates = r.cookedDates || [];
     let lastCookedText = 'Aldrig lagad';
     if(dates.length > 0) {
-      const last = dates.sort((x,y) => new Date(y) - new Date(x))[0];
+      const lastEntry = dates.sort((x,y) => new Date(y.date || y) - new Date(x.date || x))[0];
+      const last = lastEntry.date || lastEntry;
       lastCookedText = `Senast: ${new Date(last).toLocaleDateString('sv-SE', {day:'numeric', month:'short'})}`;
     }
 
@@ -256,22 +276,21 @@ function renderList() {
 
 function getScore(recipe) {
   let score = 0;
-  // 1. Filtreringspoäng (massiv bonus för valda etiketter)
   if (activeFilters.size > 0) {
     let match = 0;
     (recipe.tags||[]).forEach(t => { if(activeFilters.has(t)) match++; });
     score += match * 10000;
   }
   
-  // 2. Glömd favorit-poäng
   const dates = recipe.cookedDates || [];
   if (dates.length === 0) {
-    score += 5000; // Aldrig lagad = hög prio
+    score += 5000;
   } else {
     const now = Date.now();
-    const last = new Date(dates.sort((a,b) => new Date(b) - new Date(a))[0]).getTime();
+    const lastEntry = dates.sort((a,b) => new Date(b.date || b) - new Date(a.date || a))[0];
+    const last = new Date(lastEntry.date || lastEntry).getTime();
     const daysSince = (now - last) / (1000 * 60 * 60 * 24);
-    score += Math.min(daysSince, 365) * 10; // Fler dagar sedan = högre poäng
+    score += Math.min(daysSince, 365) * 10;
   }
   return score;
 }
@@ -289,12 +308,10 @@ function renderRecipeData() {
   if(!r) return;
   
   document.getElementById('rv-title').value = r.title || '';
-  
   const contentEl = document.getElementById('rv-content');
   contentEl.value = r.content || '';
   setTimeout(() => autoGrow(contentEl), 10);
 
-  // Rendera taggar i redigeringsläget
   const tagsCont = document.getElementById('rv-tags-edit');
   tagsCont.innerHTML = '';
   (r.tags||[]).forEach(tag => {
@@ -302,8 +319,7 @@ function renderRecipeData() {
   });
   tagsCont.innerHTML += `<input type="text" class="tag-input" id="tag-input" placeholder="+ Lägg till etikett" onkeydown="if(event.key==='Enter') addTagToRecipe(this)">`;
 
-  // Statistik
-  const dates = (r.cookedDates || []).sort((a,b) => new Date(b) - new Date(a));
+  const dates = (r.cookedDates || []).sort((a,b) => new Date(b.date || b) - new Date(a.date || a));
   const stText = document.getElementById('stat-text');
   const stList = document.getElementById('stat-list');
   
@@ -311,9 +327,26 @@ function renderRecipeData() {
     stText.innerText = 'Aldrig lagad';
     stList.innerHTML = '<div class="stat-item">Ingen historik ännu.</div>';
   } else {
-    const lastStr = new Date(dates[0]).toLocaleDateString('sv-SE', {day:'numeric', month:'short'});
-    stText.innerText = `Lagad ${dates.length} ggr (Senast: ${lastStr})`;
-    stList.innerHTML = dates.map(d => `<div class="stat-item">• ${new Date(d).toLocaleDateString('sv-SE', {weekday:'short', day:'numeric', month:'long', year:'numeric'})}</div>`).join('');
+    const lastEntry = dates[0];
+    const lastStr = new Date(lastEntry.date || lastEntry).toLocaleDateString('sv-SE', {day:'numeric', month:'short'});
+    
+    let validRatings = dates.filter(d => d.rating).map(d => d.rating);
+    let avgRatingStr = "";
+    if (validRatings.length > 0) {
+        let sum = validRatings.reduce((a, b) => a + b, 0);
+        let avg = (sum / validRatings.length).toFixed(1);
+        avgRatingStr = ` | ★ ${avg}`;
+    }
+
+    stText.innerText = `Lagad ${dates.length} ggr${avgRatingStr} (Senast: ${lastStr})`;
+    
+    stList.innerHTML = dates.map(d => {
+        const dateObj = new Date(d.date || d);
+        const dateStr = dateObj.toLocaleDateString('sv-SE', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+        const ratingStr = d.rating ? ` <span style="color:var(--purple); margin-left:4px; font-weight:600;">★${d.rating}</span>` : '';
+        const commentStr = d.comment ? `<br><span style="color:var(--ink-soft); margin-left:12px; font-style:italic; font-size:0.75rem;">"${esc(d.comment)}"</span>` : '';
+        return `<div class="stat-item">• ${dateStr}${ratingStr}${commentStr}</div>`;
+    }).join('');
   }
 }
 
@@ -340,12 +373,43 @@ window.removeTag = async (tag) => {
   await updateDoc(doc(db, 'users', user.uid, 'recipes', currentRecipeId), { tags });
 };
 
-window.cookToday = async () => {
+// --- BETYGSFUNKTIONER ---
+window.cookToday = () => {
+  tempRating = 0;
+  document.getElementById('rating-modal').style.display = 'flex';
+  document.getElementById('rating-comment').value = '';
+  updateStars();
+};
+
+window.setRating = (num) => {
+  tempRating = num;
+  updateStars();
+};
+
+function updateStars() {
+  for(let i=1; i<=5; i++) {
+    document.getElementById('star-'+i).style.color = i <= tempRating ? 'var(--purple)' : 'var(--ink-faint)';
+  }
+}
+
+window.closeRatingModal = () => {
+  document.getElementById('rating-modal').style.display = 'none';
+};
+
+window.saveRating = async () => {
+  const comment = document.getElementById('rating-comment').value.trim();
   const r = recipes.find(x => x.id === currentRecipeId);
   const dates = r.cookedDates || [];
-  dates.push(new Date().toISOString());
+  
+  dates.push({
+    date: new Date().toISOString(),
+    rating: tempRating,
+    comment: comment
+  });
+  
   await updateDoc(doc(db, 'users', user.uid, 'recipes', currentRecipeId), { cookedDates: dates });
-  toast('Registrerat! Smaklig måltid.');
+  closeRatingModal();
+  toast('Registrerat och betygsatt!');
 };
 
 window.deleteRecipe = async () => {
@@ -367,7 +431,8 @@ window.autoGrow = el => {
 const curView = () => document.getElementById('view-list').classList.contains('active') ? 'list' : 'recipe';
 const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const toast = msg => {
-  const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show');
+  const t = document.getElementById('toast'); t.innerText = msg;
+  t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 };
 
