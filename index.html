@@ -96,8 +96,11 @@
   .toast.show { transform:translateX(-50%) translateY(0); }
 /* Ny klass för att anpassa logotyp-emojin */
   .logo-emoji {
-    font-size: 1ex; /* Sätter höjden exakt till ett litet 'r's höjd */
-    vertical-align: baseline; /* Justerar emojin vertikalt så den står på baslinjen */
+.logo-emoji {
+    font-size: 1.3em; /* Ökat för att kompensera för emojins inbyggda marginaler */
+    vertical-align: -0.12em; /* Justerar ner emojin så den står stadigt på samma linje som texten */
+    line-height: 0;
+    display: inline-block;
   }
 </style>
 </head>
