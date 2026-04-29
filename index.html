@@ -271,13 +271,21 @@ function renderList() {
       lastCookedText = `Senast: ${new Date(last).toLocaleDateString('sv-SE', {day:'numeric', month:'short'})}`;
     }
 
+    // Beräkna snittbetyg för stjärnorna
+    const ratings = dates.filter(d => d.rating).map(d => d.rating);
+    const avg = ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
+    const starsHtml = getStarsHtml(avg, r.id);
+
     const tagsHtml = (r.tags||[]).map(t => `<span class="rc-tag">${esc(t)}</span>`).join('');
     
     c.innerHTML += `
       <div class="recipe-card" onclick="openRecipe('${r.id}')">
         <div class="rc-title">${esc(r.title || 'Namnlöst recept')}</div>
         <div class="rc-tags">${tagsHtml}</div>
-        <div class="rc-meta"><span>${lastCookedText}</span></div>
+        <div class="rc-meta">
+          <span>${lastCookedText}</span>
+          ${starsHtml}
+        </div>
       </div>
     `;
   });
@@ -455,6 +463,30 @@ const toast = msg => {
 
 window.signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
 window.signOut = () => fbSignOut(auth);
+  // Funktion för att skapa stjärnor baserat på snittbetyg
+function getStarsHtml(rating, recipeId) {
+  if (!rating || rating <= 0) return '';
+  let html = '<div style="display:flex; gap:2px; align-items:center;">';
+  for (let i = 1; i <= 5; i++) {
+    let fill = 0;
+    if (rating >= i) fill = 100; // Helstjärna
+    else if (rating > i - 1) fill = (rating - (i - 1)) * 100; // Delvis fylld stjärna
+    
+    const gradId = `grad-${recipeId}-${i}`;
+    html += `
+      <svg width="14" height="14" viewBox="0 0 24 24" style="flex-shrink:0;">
+        <defs>
+          <linearGradient id="${gradId}">
+            <stop offset="${fill}%" stop-color="var(--purple)"/>
+            <stop offset="${fill}%" stop-color="var(--ink-faint)"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#${gradId})" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+      </svg>`;
+  }
+  html += '</div>';
+  return html;
+}
 </script>
 </body>
 </html>
