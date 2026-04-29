@@ -126,9 +126,10 @@
   <div id="view-recipe" class="view">
     <div class="rv-header">
       <input type="text" class="rv-title" id="rv-title" placeholder="Namn på rätten..." onblur="saveRecipe()">
-      <div class="rv-tags-edit" id="rv-tags-edit">
-        <input type="text" class="tag-input" id="tag-input" placeholder="+ Lägg till etikett" onkeydown="if(event.key==='Enter') addTagToRecipe(this.value)">
+  <div class="rv-tags-edit" id="rv-tags-edit">
+        <input type="text" list="tag-suggestions" class="tag-input" id="tag-input" placeholder="+ Lägg till etikett" onkeydown="if(event.key==='Enter') addTagToRecipe(this.value)">
       </div>
+      <datalist id="tag-suggestions"></datalist>
   
       <div class="rv-stats">
         <div class="stat-summary">
@@ -317,7 +318,15 @@ function renderRecipeData() {
   (r.tags||[]).forEach(tag => {
     tagsCont.innerHTML += `<div class="tag-edit"><span>${esc(tag)}</span><span class="tag-rm" onclick="removeTag('${esc(tag)}')">✕</span></div>`;
   });
-  tagsCont.innerHTML += `<input type="text" class="tag-input" id="tag-input" placeholder="+ Lägg till etikett" onkeydown="if(event.key==='Enter') addTagToRecipe(this)">`;
+  tagsCont.innerHTML += `<input type="text" list="tag-suggestions" class="tag-input" id="tag-input" placeholder="+ Lägg till etikett" onkeydown="if(event.key==='Enter') addTagToRecipe(this)">`;
+
+  // Samla in alla unika etiketter från hela appen och lägg in dem i datalistan
+  const allTags = new Set();
+  recipes.forEach(rec => (rec.tags||[]).forEach(t => allTags.add(t)));
+  const dataList = document.getElementById('tag-suggestions');
+  if (dataList) {
+    dataList.innerHTML = Array.from(allTags).sort().map(t => `<option value="${esc(t)}">`).join('');
+  }
 
   const dates = (r.cookedDates || []).sort((a,b) => new Date(b.date || b) - new Date(a.date || a));
   const stText = document.getElementById('stat-text');
