@@ -92,8 +92,6 @@
   .modal-textarea { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--ink); font-family:'Inter',sans-serif; padding:0.75rem; border-radius:8px; resize:vertical; min-height:100px; outline:none; }
   .modal-actions { display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem; }
 
-  .toast { position:fixed; bottom:6rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(--ink); color:var(--bg); padding:.75rem 1.25rem; border-radius:var(--radius); font-size:.875rem; z-index:999; transition:transform .3s ease; white-space:nowrap; pointer-events:none; }
-  .toast.show { transform:translateX(-50%) translateY(0); }
 /* Ny klass för att anpassa logotyp-emojin */
   .logo-emoji {
 .logo-emoji {
@@ -174,8 +172,6 @@
     </div>
   </div>
 </div>
-
-<div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -434,7 +430,6 @@ window.saveRating = async () => {
   
   await updateDoc(doc(db, 'users', user.uid, 'recipes', currentRecipeId), { cookedDates: dates });
   closeRatingModal();
-  toast('Registrerat och betygsatt!');
 };
 
 window.deleteRecipe = async () => {
@@ -455,11 +450,6 @@ window.autoGrow = el => {
 
 const curView = () => document.getElementById('view-list').classList.contains('active') ? 'list' : 'recipe';
 const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const toast = msg => {
-  const t = document.getElementById('toast'); t.innerText = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-};
 
 window.signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
 window.signOut = () => fbSignOut(auth);
